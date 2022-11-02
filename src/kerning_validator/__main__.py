@@ -72,9 +72,6 @@ def validate_kerning(ufo: Font, parsed_args: argparse.Namespace) -> None:
         debugFeatureFile=parsed_args.debug_feature_file)
     if parsed_args.progress:
         print("Compiled TTF")
-    if parsed_args.output_dir is not None:
-        output_font = parsed_args.output_dir / Path(ufo.reader.path).with_suffix(".ttf").name
-        output_font.write_bytes(tt_font_blob.getvalue())
     glyphOrder = tt_font.getGlyphOrder()
     glyph_id: dict[str, int] = {
         v: GID_PREFIX + k for k, v in enumerate(glyphOrder)
@@ -86,6 +83,9 @@ def validate_kerning(ufo: Font, parsed_args: argparse.Namespace) -> None:
     del tt_font["GSUB"]
     tt_font_blob = BytesIO()
     tt_font.save(tt_font_blob)
+    if parsed_args.output_dir is not None:
+        output_font = parsed_args.output_dir / Path(ufo.reader.path).with_suffix(".ttf").name
+        output_font.write_bytes(tt_font_blob.getvalue())
     if parsed_args.progress:
         print("Saved TTF")
 
